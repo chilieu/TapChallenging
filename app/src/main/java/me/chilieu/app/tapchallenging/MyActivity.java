@@ -48,11 +48,9 @@ public class MyActivity extends Activity  implements GestureDetector.OnGestureLi
     private int position = -1;
     //set animation for touch on grid cell
     private Animation animFadein;
-    //private MediaPlayer mPlayer2;
-    private Uri Pickup_Coin;
-    private Uri Explosion;
-    private Uri Powerup;
     private TextView total;
+    private MediaPlayer mPlayer2;
+    private boolean flgMediaPlayer = false;
     private static final String AD_UNIT_ID = "ca-app-pub-0760902944328301/2536023620";
     /** The interstitial ad. */
     private InterstitialAd interstitial;
@@ -68,19 +66,18 @@ public class MyActivity extends Activity  implements GestureDetector.OnGestureLi
         Bitmap red_circle = BitmapFactory.decodeResource(this.getResources(), R.drawable.red_circle);
 
         detector = new GestureDetector(this, this);
-        /*
+
         //setup sound
         mPlayer2 = new MediaPlayer();
-        //mPlayer2.create(this, R.raw.explosion);
-        try {
-            mPlayer2.setDataSource(getAssets().openFd("raw/explosion.mp3").getFileDescriptor());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mPlayer2.setVolume(0.5f,0.5f);*/
+        mPlayer2 = MediaPlayer.create(this, R.raw.pickup);
+        mPlayer2.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp){
+                flgMediaPlayer = true;
+            }
+        });
 
         total = (TextView) findViewById(R.id.total);
-
 
         cirlceGrid.add(new circle(0,0));
         cirlceGrid.add(new circle(1,0));
@@ -355,7 +352,7 @@ public class MyActivity extends Activity  implements GestureDetector.OnGestureLi
             img.setTag("green");
         }
         playAnim(img);
-        //playSound();
+        playSound();
     }
 
     public void playAnim(ImageView img){
@@ -369,16 +366,26 @@ public class MyActivity extends Activity  implements GestureDetector.OnGestureLi
         img.startAnimation(animFadein);
 
     }
-/*
+
     private void playSound() {
-        try {
-            if(mPlayer2.isPlaying()) {
-                mPlayer2.stop();
+        if(flgMediaPlayer == true) {
+            Log.d("Sound", "PlaySound");
+            try {
+                if (mPlayer2.isPlaying()) {
+                    Log.d("Sound", "isPlaying");
+                    mPlayer2.pause();
+                    mPlayer2.seekTo(0);
+                    Log.d("Sound", "seekTo 0");
+                }
+                mPlayer2.start();
+                Log.d("Sound", "start");
+            } catch (Exception e) {
+                // don't care
+                Log.e("Sound", "Error: " + e.toString());
             }
-            mPlayer2.start();
-        } catch (Exception e) {
-            // don't care
+        } else {
+            Log.d("Sound", "prepared yet!");
         }
     }
-*/
+
 }
